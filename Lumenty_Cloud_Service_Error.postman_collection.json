@@ -1,0 +1,289 @@
+{
+	"info": {
+		"name": "Lumenty Cloud Service Error",
+		"_postman_id": "5afb6967-bc64-42f5-bea5-c9f8861f4150",
+		"description": "# Introduction\nWhat does your API do?\n\n# Overview\nThings that the developers should know about\n\n# Authentication\nWhat is the preferred way of using the API?\n\n# Error Codes\nWhat errors and status codes can a user expect?\n\n# Rate limit\nIs there a limit to the number of requests an user can send?",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "SignUp",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "afc867a0-452a-436b-a969-6207981a2ac5",
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"ok is true\"] = jsonData.ok === true;"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"tester@mail.com\",\n  \"password\": \"tester\"\n}"
+				},
+				"url": {
+					"raw": "https://lucero.rini.pw/signup",
+					"protocol": "https",
+					"host": [
+						"lucero",
+						"rini",
+						"pw"
+					],
+					"path": [
+						"signup"
+					]
+				},
+				"description": null
+			},
+			"response": []
+		},
+		{
+			"name": "SignIn",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c49f0928-fa95-4947-aad5-7be3811b6883",
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"token\", jsonData.token);",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"ok is true\"] = jsonData.ok === true;"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"tester@mail.com\",\n  \"password\": \"tester\"\n}"
+				},
+				"url": {
+					"raw": "https://lucero.rini.pw/signin",
+					"protocol": "https",
+					"host": [
+						"lucero",
+						"rini",
+						"pw"
+					],
+					"path": [
+						"signin"
+					]
+				},
+				"description": null
+			},
+			"response": []
+		},
+		{
+			"name": "Get Bulbs",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "bc5d9c91-ca68-4d51-abc4-919a2b6be109",
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"ok is true\"] = jsonData.ok === true;",
+							"tests[\"total is 0\"] = jsonData.total === 1;"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://lucero.rini.pw/bulbs",
+					"protocol": "https",
+					"host": [
+						"lucero",
+						"rini",
+						"pw"
+					],
+					"path": [
+						"bulbs"
+					]
+				},
+				"description": null
+			},
+			"response": []
+		},
+		{
+			"name": "BulbsPost",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ff60fa80-14d9-42b3-93cc-0c01aa9b39e6",
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"ok is true\"] = jsonData.ok === true;"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "token",
+						"value": "{{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n  {\n  \"mac\": \"ABCDEFGHIJK\",\n  \"title\": \"Bulb 1\",\n  \"status\": \"\"\n}\n]"
+				},
+				"url": {
+					"raw": "https://lucero.rini.pw/bulbs",
+					"protocol": "https",
+					"host": [
+						"lucero",
+						"rini",
+						"pw"
+					],
+					"path": [
+						"bulbs"
+					]
+				},
+				"description": null
+			},
+			"response": []
+		},
+		{
+			"name": "Get Bulbs",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b0e64ebb-dd8b-412c-a738-2c80526f54ea",
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"ok is true\"] = jsonData.ok === true;",
+							"tests[\"total is 1\"] = jsonData.total === 0;"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://lucero.rini.pw/bulbs",
+					"protocol": "https",
+					"host": [
+						"lucero",
+						"rini",
+						"pw"
+					],
+					"path": [
+						"bulbs"
+					]
+				},
+				"description": null
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "522e9dfa-4a54-46b5-91f8-1ae75cc2e5b2",
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"ok is true\"] = jsonData.ok === true;"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "token",
+						"value": "{{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://lucero.rini.pw/purgeUser",
+					"protocol": "https",
+					"host": [
+						"lucero",
+						"rini",
+						"pw"
+					],
+					"path": [
+						"purgeUser"
+					]
+				},
+				"description": null
+			},
+			"response": []
+		}
+	]
+}

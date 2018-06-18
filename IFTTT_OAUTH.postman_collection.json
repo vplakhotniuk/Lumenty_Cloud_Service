@@ -1,0 +1,282 @@
+{
+	"info": {
+		"_postman_id": "32c2d8d3-7a8c-4725-8420-2806de084747",
+		"name": "IFTTT OAUTH",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Retrieve authorization code",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "bcbad327-f567-4eb6-ba79-f74b1a264a04",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "a19509b2-fa0a-4e66-8e20-10b71be01004",
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"code\", jsonData.code);",
+							"tests[\"Code was provided\"] = jsonData.code !== \"\";",
+							"tests[\"State matches original state from request\"] = jsonData.state !== \"\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://lumenty.rini.pw/ifttt/signin?client_id=e0d7baf2474e8ac81407f5&response_type=code&test=1&email=d9d9vadim@gmail.com&password=qwerty&state=ee217e4923548fe889a8e30ddcb46828cc9a2e",
+					"protocol": "https",
+					"host": [
+						"lumenty",
+						"rini",
+						"pw"
+					],
+					"path": [
+						"ifttt",
+						"signin"
+					],
+					"query": [
+						{
+							"key": "client_id",
+							"value": "e0d7baf2474e8ac81407f5"
+						},
+						{
+							"key": "response_type",
+							"value": "code"
+						},
+						{
+							"key": "test",
+							"value": "1"
+						},
+						{
+							"key": "email",
+							"value": "d9d9vadim@gmail.com"
+						},
+						{
+							"key": "password",
+							"value": "qwerty"
+						},
+						{
+							"key": "state",
+							"value": "ee217e4923548fe889a8e30ddcb46828cc9a2e"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Request access token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "05c7c7e1-116c-4587-bf2a-63280809b23d",
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"access_token\", jsonData.access_token);",
+							"postman.setEnvironmentVariable(\"refresh_token\", jsonData.refresh_token);",
+							"tests[\"Access token is provided\"] = jsonData.access_token !== \"\";",
+							"tests[\"Refresh token is provided\"] = jsonData.refresh_token !== \"\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"client_id\": \"e0d7baf2474e8ac81407f5\",\r\n  \"client_secret\": \"61eef2de8e96b8aa944199ae0d7baf2474e8ac81407f5b2a749c9\",\r\n  \"grant_type\": \"authorization_code\",\r\n  \"code\": \"{{code}}\",\r\n  \"redirect_uri\": \"https://ifttt.com/channels/lumenty/authorize\"\r\n}"
+				},
+				"url": {
+					"raw": "https://lumenty.rini.pw/ifttt/oauthExchange",
+					"protocol": "https",
+					"host": [
+						"lumenty",
+						"rini",
+						"pw"
+					],
+					"path": [
+						"ifttt",
+						"oauthExchange"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve user information",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8c6889a1-08c7-418c-8987-4f22d411ee63",
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://lumenty.rini.pw/ifttt/v1/user/info?access_token={{access_token}}",
+					"protocol": "https",
+					"host": [
+						"lumenty",
+						"rini",
+						"pw"
+					],
+					"path": [
+						"ifttt",
+						"v1",
+						"user",
+						"info"
+					],
+					"query": [
+						{
+							"key": "access_token",
+							"value": "{{access_token}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh access token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "81b94c4c-2f44-4fb8-b4a9-3ae2b124e4f6",
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Access token is provided\"] = jsonData.access_token !== \"\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"client_id\": \"e0d7baf2474e8ac81407f5\",\r\n  \"client_secret\": \"61eef2de8e96b8aa944199ae0d7baf2474e8ac81407f5b2a749c9\",\r\n  \"grant_type\": \"refresh_token\",\r\n  \"refresh_token\": \"{{refresh_token}}\"\r\n}"
+				},
+				"url": {
+					"raw": "https://lumenty.rini.pw/ifttt/oauthExchange",
+					"protocol": "https",
+					"host": [
+						"lumenty",
+						"rini",
+						"pw"
+					],
+					"path": [
+						"ifttt",
+						"oauthExchange"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ensure older refresh token does not  expire immediately",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "24d22573-7930-4f39-ac45-eabec1f2a180",
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Access token is provided\"] = jsonData.access_token !== \"\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"client_id\": \"e0d7baf2474e8ac81407f5\",\r\n  \"client_secret\": \"61eef2de8e96b8aa944199ae0d7baf2474e8ac81407f5b2a749c9\",\r\n  \"grant_type\": \"refresh_token\",\r\n  \"refresh_token\": \"{{refresh_token}}\"\r\n}"
+				},
+				"url": {
+					"raw": "https://lumenty.rini.pw/ifttt/oauthExchange",
+					"protocol": "https",
+					"host": [
+						"lumenty",
+						"rini",
+						"pw"
+					],
+					"path": [
+						"ifttt",
+						"oauthExchange"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

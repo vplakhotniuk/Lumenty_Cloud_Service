@@ -1,0 +1,236 @@
+{
+	"info": {
+		"_postman_id": "bdfae295-7a25-4489-8fb5-e3b6b47ab987",
+		"name": "GASS OAUTH",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Retrieve authorization code",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "bcbad327-f567-4eb6-ba79-f74b1a264a04",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "a19509b2-fa0a-4e66-8e20-10b71be01004",
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"code\", jsonData.code);",
+							"tests[\"Code was provided\"] = jsonData.code !== \"\";",
+							"tests[\"State matches original state from request\"] = jsonData.state !== \"\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://lumenty.rini.pw/signin?client_id=e0d7baf2474e8ac81407f5&response_type=code&test=1&email=d9d9vadim@gmail.com&password=qwerty&state=ee217e4923548fe889a8e30ddcb46828cc9a2e",
+					"protocol": "https",
+					"host": [
+						"lumenty",
+						"rini",
+						"pw"
+					],
+					"path": [
+						"signin"
+					],
+					"query": [
+						{
+							"key": "client_id",
+							"value": "e0d7baf2474e8ac81407f5"
+						},
+						{
+							"key": "response_type",
+							"value": "code"
+						},
+						{
+							"key": "test",
+							"value": "1"
+						},
+						{
+							"key": "email",
+							"value": "d9d9vadim@gmail.com"
+						},
+						{
+							"key": "password",
+							"value": "qwerty"
+						},
+						{
+							"key": "state",
+							"value": "ee217e4923548fe889a8e30ddcb46828cc9a2e"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Request access token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "05c7c7e1-116c-4587-bf2a-63280809b23d",
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"access_token\", jsonData.access_token);",
+							"postman.setEnvironmentVariable(\"refresh_token\", jsonData.refresh_token);",
+							"tests[\"Access token is provided\"] = jsonData.access_token !== \"\";",
+							"tests[\"Refresh token is provided\"] = jsonData.refresh_token !== \"\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"client_id\": \"e0d7baf2474e8ac81407f5\",\r\n  \"client_secret\": \"61eef2de8e96b8aa944199ae0d7baf2474e8ac81407f5b2a749c9\",\r\n  \"grant_type\": \"authorization_code\",\r\n  \"code\": \"{{code}}\"\r\n}"
+				},
+				"url": {
+					"raw": "https://lumenty.rini.pw/gass/exchange",
+					"protocol": "https",
+					"host": [
+						"lumenty",
+						"rini",
+						"pw"
+					],
+					"path": [
+						"gass",
+						"exchange"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh access token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "07ad0246-ba92-4551-808d-eb893a832721",
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Access token is provided\"] = jsonData.access_token !== \"\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"client_id\": \"e0d7baf2474e8ac81407f5\",\r\n  \"client_secret\": \"61eef2de8e96b8aa944199ae0d7baf2474e8ac81407f5b2a749c9\",\r\n  \"grant_type\": \"refresh_token\",\r\n  \"refresh_token\": \"{{refresh_token}}\"\r\n}"
+				},
+				"url": {
+					"raw": "https://lumenty.rini.pw/gass/exchange",
+					"protocol": "https",
+					"host": [
+						"lumenty",
+						"rini",
+						"pw"
+					],
+					"path": [
+						"gass",
+						"exchange"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ensure older refresh token does not  expire immediately",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f67823c5-1168-4606-9aeb-5480ab16bc95",
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Access token is provided\"] = jsonData.access_token !== \"\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"client_id\": \"e0d7baf2474e8ac81407f5\",\r\n  \"client_secret\": \"61eef2de8e96b8aa944199ae0d7baf2474e8ac81407f5b2a749c9\",\r\n  \"grant_type\": \"refresh_token\",\r\n  \"refresh_token\": \"{{refresh_token}}\"\r\n}"
+				},
+				"url": {
+					"raw": "https://lumenty.rini.pw/gass/exchange",
+					"protocol": "https",
+					"host": [
+						"lumenty",
+						"rini",
+						"pw"
+					],
+					"path": [
+						"gass",
+						"exchange"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

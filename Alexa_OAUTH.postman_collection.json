@@ -1,0 +1,212 @@
+{
+	"info": {
+		"_postman_id": "5b4166be-cb90-4458-960b-4b885be33dae",
+		"name": "Alexa OAUTH",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Retrieve authorization code",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0d73f991-21be-4bfc-89f5-d659460111f2",
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"code\", jsonData.code);",
+							"tests[\"Code was provided\"] = jsonData.code !== \"\";",
+							"tests[\"State matches original state from request\"] = jsonData.state !== \"\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://lumenty.rini.pw/alexa/signin?client_id=e0d7baf2474e8ac81407f5&response_type=code&test=1&email=d9d9vadim@gmail.com&password=qwerty&state=ee217e4923548fe889a8e30ddcb46828cc9a2e",
+					"protocol": "https",
+					"host": [
+						"lumenty",
+						"rini",
+						"pw"
+					],
+					"path": [
+						"alexa",
+						"signin"
+					],
+					"query": [
+						{
+							"key": "client_id",
+							"value": "e0d7baf2474e8ac81407f5"
+						},
+						{
+							"key": "response_type",
+							"value": "code"
+						},
+						{
+							"key": "test",
+							"value": "1"
+						},
+						{
+							"key": "email",
+							"value": "d9d9vadim@gmail.com"
+						},
+						{
+							"key": "password",
+							"value": "qwerty"
+						},
+						{
+							"key": "state",
+							"value": "ee217e4923548fe889a8e30ddcb46828cc9a2e"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Request access token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e166d4e4-bed2-4706-9386-2288dcd3d1a4",
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"access_token\", jsonData.access_token);",
+							"postman.setEnvironmentVariable(\"refresh_token\", jsonData.refresh_token);",
+							"tests[\"Access token is provided\"] = jsonData.access_token !== \"\";",
+							"tests[\"Refresh token is provided\"] = jsonData.refresh_token !== \"\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"client_id\": \"e0d7baf2474e8ac81407f5\",\r\n  \"client_secret\": \"61eef2de8e96b8aa944199ae0d7baf2474e8ac81407f5b2a749c9\",\r\n  \"grant_type\": \"authorization_code\",\r\n  \"code\": \"{{code}}\"\r\n}"
+				},
+				"url": {
+					"raw": "https://lumenty.rini.pw/oauth/exchange",
+					"protocol": "https",
+					"host": [
+						"lumenty",
+						"rini",
+						"pw"
+					],
+					"path": [
+						"oauth",
+						"exchange"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh access token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "47629408-99ec-4a3f-a813-aa12589cef2b",
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Access token is provided\"] = jsonData.access_token !== \"\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"client_id\": \"e0d7baf2474e8ac81407f5\",\r\n  \"client_secret\": \"61eef2de8e96b8aa944199ae0d7baf2474e8ac81407f5b2a749c9\",\r\n  \"grant_type\": \"refresh_token\",\r\n  \"refresh_token\": \"{{refresh_token}}\"\r\n}"
+				},
+				"url": {
+					"raw": "https://lumenty.rini.pw/oauth/exchange",
+					"protocol": "https",
+					"host": [
+						"lumenty",
+						"rini",
+						"pw"
+					],
+					"path": [
+						"oauth",
+						"exchange"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ensure older refresh token does not  expire immediately",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b50797c5-cd98-4e93-a911-3896dab77c42",
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Access token is provided\"] = jsonData.access_token !== \"\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"client_id\": \"e0d7baf2474e8ac81407f5\",\r\n  \"client_secret\": \"61eef2de8e96b8aa944199ae0d7baf2474e8ac81407f5b2a749c9\",\r\n  \"grant_type\": \"refresh_token\",\r\n  \"refresh_token\": \"{{refresh_token}}\"\r\n}"
+				},
+				"url": {
+					"raw": "https://lumenty.rini.pw/oauth/exchange",
+					"protocol": "https",
+					"host": [
+						"lumenty",
+						"rini",
+						"pw"
+					],
+					"path": [
+						"oauth",
+						"exchange"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
